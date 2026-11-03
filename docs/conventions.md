@@ -6,7 +6,9 @@ Based on the Microsoft Cloud Adoption Framework: `<type>-<workload>-<env>-<regio
 
 - workload: `dr`
 - env: `lab`
-- region: `weu` (West Europe) or `itn` (Italy North)
+- region: `sdc` (Sweden Central, used), `itn` (Italy North), `weu` (West Europe)
+
+Examples below use `weu`; the lab runs in `sdc` (see [phase 0](phase-0-guardrails.md) for why).
 
 | Resource | Abbreviation | Example |
 |---|---|---|

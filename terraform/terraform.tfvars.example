@@ -2,8 +2,8 @@
 subscription_id = "00000000-0000-0000-0000-000000000000"
 owner           = "your-name"
 
-location     = "westeurope"
-region_short = "weu"
+location     = "swedencentral"
+region_short = "sdc"
 phase        = "6"
 
 # Pick a range that overlaps none of your home networks or VPN ranges.

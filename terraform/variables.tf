@@ -6,13 +6,13 @@ variable "subscription_id" {
 variable "location" {
   description = "Azure region"
   type        = string
-  default     = "westeurope"
+  default     = "swedencentral"
 }
 
 variable "region_short" {
-  description = "Short region code used in names (weu, itn)"
+  description = "Short region code used in names (sdc, itn, weu)"
   type        = string
-  default     = "weu"
+  default     = "sdc"
 }
 
 variable "owner" {
