@@ -1,0 +1,12 @@
+# Copy to terraform.tfvars (gitignored) and fill in real values.
+subscription_id = "00000000-0000-0000-0000-000000000000"
+owner           = "your-name"
+
+location     = "westeurope"
+region_short = "weu"
+phase        = "6"
+
+# Pick a range that overlaps none of your home networks or VPN ranges.
+vnet_address_space    = ["10.0.0.0/16"]
+gateway_subnet_prefix = "10.0.0.0/27"
+pve_subnet_prefix     = "10.0.1.0/24"
