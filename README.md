@@ -1,45 +1,48 @@
-# azure-glpi-lab
+# Hybrid DR lab: Proxmox + Ceph to Azure
 
-A full-cloud lab on **Microsoft Azure**: deploying **GLPI** (IT service desk and asset management) the way a small organisation would run it — private networking, managed database, central identity, monitoring and backups — first by hand in the **Azure portal**, then rebuilt as code with **Terraform** and **Ansible**.
+A disaster-recovery lab that connects a **hyper-converged Proxmox VE + Ceph cluster** at home to **Microsoft Azure**: storage is replicated asynchronously with **Ceph RBD mirroring** over a **site-to-site VPN**, so that if the whole home cluster goes down, workloads restart on a **Proxmox node running in Azure**.
 
-> Status: preparation (no Azure resources yet).
+> Status: phase 0 (guardrails). Azure free trial active.
 
 ## Goals
 
-- Learn each Azure service hands-on in the portal before automating it
-- Rebuild the same environment with **Terraform** and compare it with the portal's exported template
-- Configure the VM and GLPI with **Ansible**
-- Apply **Zero Trust** principles: no public IPs on servers, **Entra ID** SSO with **MFA** and **Conditional Access**, secrets in **Key Vault**, **Managed Identity**
-- Prove operations: **Azure Monitor** alerts, **Azure Backup** with a tested restore
+- Build a real **3-node hyper-converged cluster** (Proxmox VE + Ceph), nested on a single home host
+- Connect home and cloud with a **site-to-site VPN** between **OPNsense** and **Azure VPN Gateway**
+- Replicate container storage off-site with **Ceph RBD snapshot mirroring** (`rbd-mirror`)
+- Run a **documented failover and failback**, with measured **RPO** and **RTO**
+- Rebuild the Azure side as code with **Terraform** and configure hosts with **Ansible**
 - Run everything from **GitHub Actions** with OIDC (no stored cloud credentials)
-- Keep the whole lab inside a free-trial budget, with cost guardrails from day one
+- Stay inside the free-trial credit, with cost guardrails from day one
 
-## Architecture (target)
+## Architecture
 
-| Area | Service |
-|---|---|
-| Network | VNet with app and data subnets, NSGs, no public IP on the VM |
-| Admin access | Azure Bastion (Developer SKU) |
-| Compute | Linux VM (B1s) running GLPI |
-| Database | Azure Database for MySQL – Flexible Server (B1ms), private access |
-| Identity | Entra ID SSO, MFA, Conditional Access, Managed Identity |
-| Secrets | Key Vault |
-| Monitoring | Azure Monitor, Log Analytics, alert rules |
-| Backup | Azure Backup with documented restore test |
-| Inventory | GLPI Agent deployed with Ansible |
+```
+ HOME (primary site)                                   AZURE (DR site)
+ ┌──────────────────────────────────────┐              ┌──────────────────────────────┐
+ │ Physical Proxmox host                │              │ VNet                         │
+ │  ├─ OPNsense (firewall, VPN)  ◄──────┼── IPsec ─────┼─► VPN Gateway                │
+ │  └─ Nested cluster (3 nodes)         │   S2S VPN    │                              │
+ │      ├─ Proxmox VE + Ceph (MON, OSD) │              │  Proxmox VE node (single)    │
+ │      ├─ Proxmox VE + Ceph (MON, OSD) │  RBD mirror  │   ├─ Ceph, 1 MON, 2–3 OSD    │
+ │      └─ Proxmox VE + Ceph (MON, OSD) │ ───────────► │   ├─ rbd-mirror daemon       │
+ │          └─ test LXC on Ceph RBD     │  snapshots   │   └─ test LXC (on failover)  │
+ └──────────────────────────────────────┘              └──────────────────────────────┘
+```
+
+Design decisions and their reasons: [docs/architecture.md](docs/architecture.md).
 
 ## Phases
 
 | # | Phase | Notes |
 |---|---|---|
-| 0 | [Guardrails](docs/phase-0-guardrails.md) | Budgets, Azure Policy, cost analysis |
-| 1 | Portal build | ClickOps, with screenshots |
-| 2 | Terraform rebuild | Destroy and recreate as code |
-| 3 | Ansible configuration | GLPI install, hardening, agent |
-| 4 | Identity and Zero Trust | Entra ID SSO, MFA, Conditional Access |
-| 5 | Monitoring and backup | Alerts, backup, restore test |
-| 6 | CI/CD | GitHub Actions with OIDC |
-| 7 | Agentic operations | Sub-agents for IaC review, cost and health checks |
+| 0 | [Guardrails](docs/phase-0-guardrails.md) | Budget, Azure Policy, quotas |
+| 1 | Nested HCI cluster | 3 Proxmox VE nodes + Ceph on the home host, test LXC on RBD |
+| 2 | Site-to-site VPN | OPNsense ↔ Azure VPN Gateway (IPsec, route-based) |
+| 3 | Azure DR node | Proxmox VE on an Azure VM, single-node Ceph |
+| 4 | Ceph RBD mirroring | Snapshot-based mirroring, container config sync |
+| 5 | Failover and failback | Runbook, measured RPO/RTO, failback to home |
+| 6 | Infrastructure as code and CI | Terraform (Azure side), Ansible (hosts), GitHub Actions with OIDC |
+| 7 | Agentic operations | Sub-agents for IaC review, cost and health checks, failover runbook with approval |
 | 8 | Wrap-up | Documentation, teardown |
 
 Naming and tagging rules: [docs/conventions.md](docs/conventions.md).
@@ -47,7 +50,8 @@ Naming and tagging rules: [docs/conventions.md](docs/conventions.md).
 ## Layout
 
 ```
-docs/          one page per phase, conventions, screenshots/
-terraform/     infrastructure as code (phase 2)
-ansible/       VM and application configuration (phase 3)
+docs/          architecture, one page per phase, conventions, screenshots/
+terraform/     Azure infrastructure as code (phase 6)
+ansible/       Proxmox, Ceph and rbd-mirror configuration (phase 6)
+runbooks/      failover and failback procedures (phase 5)
 ```

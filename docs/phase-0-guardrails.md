@@ -2,32 +2,48 @@
 
 Goal: make it impossible to spend real money or drift outside the lab's scope before building anything.
 
-Account: personal **Azure free account** ($200 credit for 30 days, spending limit on, 12 months of free services). The 30-day clock starts at sign-up, so this phase runs only when the lab can be worked on steadily.
+Account: personal **Azure free account** ($200 credit for 30 days, spending limit on, 12 months of free services). Trial activated in November 2026.
 
 ## Checklist
 
 ### Account
-- [ ] Sign up for the Azure free account with a personal Microsoft account
+- [x] Sign up for the Azure free account with a personal Microsoft account
 - [ ] Verify **spending limit = On** (Cost Management → Subscriptions)
 - [ ] Enable MFA on the admin account
 - [ ] Note the credit expiry date in this file (no IDs)
+- [x] Register the `Microsoft.Compute` resource provider (needed to read quotas)
+
+### Quotas (checked with `az vm list-usage`)
+- [x] West Europe and Italy North: **4 vCPUs total per region**, 4 per VM family
+- Consequence: single-node DR site (see [architecture](architecture.md))
 
 ### Cost
-- [ ] Budget `budget-glpi-lab` on the subscription: 20 USD/month, alerts at 25 % (5), 50 % (10), 100 % (20) actual + 100 % forecast
+- [ ] Budget on the subscription: **150 EUR**, alerts at 25 %, 50 %, 80 %, 100 % actual + 100 % forecast
 - [ ] Cost Analysis view grouped by tag `project` and `phase`, saved
 - [ ] Review the credit balance at the start of every session
+- [ ] Deallocate the DR node when not testing
+
+Estimated spend for 30 days (to be checked against the Pricing Calculator):
+
+| Item | Estimate |
+|---|---|
+| DR node B2as_v2 / B2s_v2 (2 vCPU, 8 GB) | ~60 USD |
+| Managed disks (OS + 2 OSD, small) | ~10–15 USD |
+| VPN Gateway Basic + public IP | ~30 USD |
+| Monitoring, experiments | ~10–20 USD |
+| **Total** | **~110–125 USD** |
 
 ### Azure Policy (assigned on the subscription)
 - [ ] **Allowed locations**: West Europe, Italy North
-- [ ] **Allowed virtual machine size SKUs**: `Standard_B1s`, `Standard_B1ms`
+- [ ] **Allowed virtual machine size SKUs**: `Standard_B1s`, `Standard_B2as_v2`, `Standard_B2s_v2`, `Standard_B4as_v2`
 - [ ] **Require a tag on resources**: `project`, `env`, `phase` (built-in policy, one assignment per tag)
-- [ ] Optional: **Not allowed resource types** for expensive services (Azure Firewall, Application Gateway, Bastion Standard/Basic, VPN Gateway)
+- [ ] **Not allowed resource types**: Azure Firewall, Application Gateway, Azure Bastion
 
 ### Verification
-- [ ] Try to create a VM larger than B1ms → denied by policy
+- [ ] Try to create a VM outside the allowed sizes → denied by policy
 - [ ] Try to create a resource in another region → denied by policy
 - [ ] Screenshots of budget, policy assignments and denied attempts in `screenshots/phase-0/`
 
 ## Notes
 
-_(decisions, problems and what was learned)_
+- 2026-11: the lab started as a GLPI deployment and was redesigned as a hybrid DR lab before any resource was created.
