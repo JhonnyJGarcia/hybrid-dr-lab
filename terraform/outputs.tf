@@ -17,3 +17,15 @@ output "subnets" {
     pve     = azurerm_subnet.pve.name
   }
 }
+
+# ---- Phase 3: Proxmox DR node ----
+
+output "pve_private_ip" {
+  description = "Private IP of the Proxmox DR node (reach it over the VPN)"
+  value       = azurerm_network_interface.pve.private_ip_address
+}
+
+output "pve_ssh_jump" {
+  description = "SSH to the DR node, jumping through the home cluster node px1"
+  value       = "ssh -J root@192.168.50.10 ${var.admin_username}@${azurerm_network_interface.pve.private_ip_address}"
+}
