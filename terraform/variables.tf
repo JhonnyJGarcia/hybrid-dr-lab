@@ -125,3 +125,10 @@ variable "image_version" {
   type        = string
   default     = "latest"
 }
+
+variable "dr_lxc_subnet_prefix" {
+  description = "SDN subnet for failed-over LXC, routed via the Proxmox node (not an Azure subnet)"
+  type        = string
+  default     = "10.50.2.0/24"
+}
+
