@@ -1,0 +1,35 @@
+#!/bin/bash
+# Read-only container info for the lab agents, installed on each Proxmox node as
+# /usr/local/bin/agent-ct-info (root:root, 755) and allowed in /etc/sudoers.d/agent.
+#
+# Why a script instead of `cat /etc/pve/nodes/*/lxc/*.conf` in sudoers: a `*` in a
+# sudoers argument also matches spaces and slashes, so such a rule would let the
+# caller read any file. This script accepts exactly one numeric ID and nothing else.
+#
+# Prints: the node that owns the container, its status, and its current config
+# (snapshot sections removed), wherever it runs in the cluster.
+set -euo pipefail
+
+if [[ $# -ne 1 || ! $1 =~ ^[0-9]{3,9}$ ]]; then
+  echo "usage: agent-ct-info <vmid>" >&2
+  exit 2
+fi
+id=$1
+
+conf=""
+for f in /etc/pve/nodes/*/lxc/"$id".conf; do
+  [[ -f $f ]] && conf=$f && break
+done
+if [[ -z $conf ]]; then
+  echo "CT $id: not defined on this cluster"
+  exit 1
+fi
+
+node=$(basename "$(dirname "$(dirname "$conf")")")
+status=$(pvesh get /cluster/resources --type vm --output-format json \
+  | python3 -c 'import json,sys; v=int(sys.argv[1]); print(next((r.get("status","?") for r in json.load(sys.stdin) if r.get("vmid")==v), "unknown"))' "$id")
+
+echo "node: $node"
+echo "status: $status"
+echo "--- config"
+sed '/^\[/,$d' "$conf"

@@ -54,6 +54,8 @@ Layer 3 is the real boundary. The hook is a pattern match and can be evaded by a
 
 The cost data needs `az rest --method post` (Cost Management query API). Allow-listing `az rest` would also allow any write to any resource. Instead, a read-only script (`scripts/cost-report.sh`) is allow-listed and protected from edits. The same idea as the sudoers list: expose a specific command, not a general tool.
 
+The `dr-operator` needs a container's config wherever it runs in the home cluster. The obvious sudoers rule, `cat /etc/pve/nodes/*/lxc/[0-9]*.conf`, is a trap: in a sudoers argument `*` also matches spaces and slashes, so `cat /etc/pve/nodes/x/lxc/1 /etc/pve/priv/authkey.key x.conf` would match and leak a key. Instead each node has `/usr/local/bin/agent-ct-info` (source in `scripts/node/`), owned by root, which accepts exactly one numeric ID and prints the owning node, the status and the config. Tested: `agent-ct-info "101 /etc/shadow"` is rejected.
+
 ### Nothing environment-specific in the repo
 
 Agents reach the nodes through SSH aliases (`dr-home`, `dr-azure`) defined on the operator's machine. Addresses, keys and the billing account ID never appear in the repo, which is public: the cost script discovers the billing account at run time.

@@ -24,8 +24,8 @@ The procedure is `runbooks/failover-failback.md`: read it first, every time. You
 | DR Ceph | `ssh dr-azure sudo ceph -s` | `HEALTH_OK` or a `HEALTH_WARN` you can explain |
 | Mirror daemon | `ssh dr-azure sudo systemctl is-active ceph-rbd-mirror@rbd-mirror.azure` | `active` |
 | Image state and lag | `ssh dr-azure sudo rbd mirror image status rbd-dr/vm-<id>-disk-0` and `date +%s` | failover: `up+replaying`, lag = now − `local_snapshot_timestamp`; failback: the image is primary on Azure |
-| Container at home | `ssh dr-home sudo pct status <id>` and `ssh dr-home sudo pct config <id>` | for failover: exists; keep its config to build the DR one |
-| Container on DR node | `ssh dr-azure sudo pct status <id>` | failover: must **not** exist; failback: exists |
+| Container at home | `ssh dr-home sudo agent-ct-info <id>` | Prints the home node that owns it, its status and its config, wherever it runs in the cluster. For failover: exists; keep the config to build the DR one. The commands you give for that container must run on **that** node |
+| Container on DR node | `ssh dr-azure sudo agent-ct-info <id>` | failover: *not defined* (it must not exist yet); failback: exists |
 | DR network | `ssh dr-azure sudo pvesh get /cluster/sdn/vnets` | the vnet of zone `drnet`: its name is the bridge for `net0` |
 
 For a **disaster failover** the home checks will fail: that is expected. State that the RPO equals the measured lag and that writes made at home after the last mirrored snapshot are lost.
@@ -40,7 +40,7 @@ Produce one numbered block per host, in order, ready to paste. For each block:
 - **Expected result** and how the operator can see it
 - **If it goes wrong**: what to do before continuing
 
-For failover, build the DR container config from the home `pct config` output: same settings, but `net0` with `bridge=<drnet vnet>`, `ip=<DR IP>/24`, `gw=10.50.2.1`, and **no** HA entry. Show it as a heredoc that writes `/root/dr-configs/<id>.conf` on the DR node, then the `cp` into `/etc/pve/lxc/`.
+For failover, build the DR container config from the home `agent-ct-info` output: same settings, but `net0` with `bridge=<drnet vnet>`, `ip=<DR IP>/24`, `gw=10.50.2.1`, and **no** HA entry. Show it as a heredoc that writes `/root/dr-configs/<id>.conf` on the DR node, then the `cp` into `/etc/pve/lxc/`.
 
 Point out the irreversible moments explicitly with **⚠️ point of no return**: `promote --force` (both sites become primary) and, in failback, `resync` (Azure-side writes are discarded).
 
