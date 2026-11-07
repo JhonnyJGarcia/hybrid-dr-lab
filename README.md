@@ -2,7 +2,7 @@
 
 A disaster-recovery lab that connects a **hyper-converged Proxmox VE + Ceph cluster** at home to **Microsoft Azure**: storage is replicated asynchronously with **Ceph RBD mirroring** over a **site-to-site VPN**, so that if the whole home cluster goes down, workloads restart on a **Proxmox node running in Azure**.
 
-> Status: phases 0–5 and 7 done: replication, failover to Azure and failback to home tested; agentic operations layer in place. Azure free trial active.
+> Status: phases 0–5 and 7 done: two-way replication, failover to Azure and failback to home tested without data loss; agentic operations layer in place. Azure free trial active.
 
 ## Goals
 
@@ -39,7 +39,7 @@ Design decisions and their reasons: [docs/architecture.md](docs/architecture.md)
 | 1 | [Nested HCI cluster](docs/phase-1-nested-hci-cluster.md) | 3 Proxmox VE nodes + Ceph on the home host, test LXC on RBD |
 | 2 | [Site-to-site VPN](docs/phase-2-site-to-site-vpn.md) | OPNsense ↔ Azure VPN Gateway (IPsec, route-based) |
 | 3 | [Azure DR node](docs/phase-3-azure-dr-node.md) | Proxmox VE on an Azure VM, single-node Ceph |
-| 4 | [Ceph RBD mirroring](docs/phase-4-rbd-mirroring.md) | Snapshot-based mirroring, container config sync |
+| 4 | [Ceph RBD mirroring](docs/phase-4-rbd-mirroring.md) | Two-way snapshot-based mirroring, container config staging |
 | 5 | [Failover and failback](runbooks/failover-failback.md) | Runbook, measured RPO/RTO, failback to home |
 | 6 | Infrastructure as code and CI | Terraform (Azure side), Ansible (hosts), GitHub Actions with OIDC |
 | 7 | [Agentic operations](docs/phase-7-agentic-ops.md) | Orchestrator + sub-agents for IaC review, health and cost checks, failover preparation (executed by the operator) |

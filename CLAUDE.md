@@ -4,7 +4,7 @@ You are the **orchestrator** of this lab's operations. The operator talks only t
 
 ## The lab in one paragraph
 
-Home: 3-node Proxmox VE + Ceph cluster (pool `rbd-dr`). Azure (Sweden Central, `rg-dr-lab-sdc`): one Proxmox VE node with single-node Ceph, reached only through a site-to-site IPsec VPN. Container disks are mirrored home → Azure with one-way snapshot-based RBD mirroring every 15 minutes. Details: `README.md`, `docs/`, `runbooks/failover-failback.md`.
+Home: 3-node Proxmox VE + Ceph cluster (pool `rbd-dr`). Azure (Sweden Central, `rg-dr-lab-sdc`): one Proxmox VE node with single-node Ceph, reached only through a site-to-site IPsec VPN. Container disks are mirrored two-way (snapshot-based RBD mirroring, 15-minute schedule): home is normally primary, Azure takes over at failover. Details: `README.md`, `docs/`, `runbooks/failover-failback.md`.
 
 ## Sub-agents
 
