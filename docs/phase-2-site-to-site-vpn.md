@@ -28,6 +28,7 @@ IPsec tunnel between **OPNsense** at home and an **Azure VPN Gateway**. Built by
 - Static route `10.50.0.0/16` via the VTI interface
 - Firewall rule on the VTI interface: Azure VNet → home lab network
 - Dead peer detection on
+- **MSS clamping** (1300) on the VTI interface, to avoid fragmentation and stalled TCP sessions through the tunnel
 
 **Behind NAT:** OPNsense sits behind the ISP router. Because OPNsense is the **initiator** and NAT-T moves IPsec to UDP 4500, **no port forward** on the ISP router was needed.
 
@@ -46,7 +47,3 @@ The tunnel failed with `NO_PROPOSAL_CHOSEN` and address mismatches until three s
 | Phase 1 proposals | strongSwan *default* | Must include **DH group 2 (modp1024)**. strongSwan's default set leaves it out as weak, but Basic SKU's default policy requires it, and Basic cannot be given a custom policy |
 
 DH group 2 is weak by today's standards. It is accepted here because the lab is short-lived and Basic SKU leaves no choice; a production setup would use VpnGw1 or higher with a custom IPsec policy (e.g. DH group 14/24, AES-GCM).
-
-## Open item
-
-- **MSS clamping** (1300) on the VTI interface, to avoid fragmentation and stalled TCP sessions through the tunnel.

@@ -83,7 +83,7 @@ In the test, HA placed the container on a different home node than the one it le
 |---|---|---|
 | RPO, planned failover | — | 0 (forced snapshot before shutdown) |
 | RPO, unplanned | ≤ 15 min | Bounded by the 15-minute snapshot schedule |
-| RTO | ≤ 30 min | _to be timed_ |
+| RTO | ≤ 30 min | Not timed; manual steps took a few minutes |
 
 ## Known limits and next steps
 
