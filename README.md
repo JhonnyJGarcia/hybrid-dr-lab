@@ -36,9 +36,9 @@ Design decisions and their reasons: [docs/architecture.md](docs/architecture.md)
 | # | Phase | Notes |
 |---|---|---|
 | 0 | [Guardrails](docs/phase-0-guardrails.md) | Budget, Azure Policy, quotas |
-| 1 | Nested HCI cluster | 3 Proxmox VE nodes + Ceph on the home host, test LXC on RBD |
-| 2 | Site-to-site VPN | OPNsense ↔ Azure VPN Gateway (IPsec, route-based) |
-| 3 | Azure DR node | Proxmox VE on an Azure VM, single-node Ceph |
+| 1 | [Nested HCI cluster](docs/phase-1-nested-hci-cluster.md) | 3 Proxmox VE nodes + Ceph on the home host, test LXC on RBD |
+| 2 | [Site-to-site VPN](docs/phase-2-site-to-site-vpn.md) | OPNsense ↔ Azure VPN Gateway (IPsec, route-based) |
+| 3 | [Azure DR node](docs/phase-3-azure-dr-node.md) | Proxmox VE on an Azure VM, single-node Ceph |
 | 4 | [Ceph RBD mirroring](docs/phase-4-rbd-mirroring.md) | Snapshot-based mirroring, container config sync |
 | 5 | [Failover and failback](runbooks/failover-failback.md) | Runbook, measured RPO/RTO, failback to home |
 | 6 | Infrastructure as code and CI | Terraform (Azure side), Ansible (hosts), GitHub Actions with OIDC |
