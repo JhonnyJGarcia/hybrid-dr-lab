@@ -29,7 +29,11 @@
       "Bash(ssh dr-azure sudo rbd mirror pool status rbd-dr:*)",
       "Bash(ssh dr-azure sudo rbd mirror image status rbd-dr/:*)",
       "Bash(date +%s)",
-      "Bash(./scripts/cost-report.sh)"
+      "Bash(./scripts/cost-report.sh)",
+      "Bash(ssh dr-home sudo pct status:*)",
+      "Bash(ssh dr-home sudo pct config:*)",
+      "Bash(ssh dr-azure sudo pct status:*)",
+      "Bash(ssh dr-azure sudo pvesh get /cluster/sdn/vnets)"
     ],
     "ask": [
       "Bash(az vm deallocate:*)",

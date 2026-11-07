@@ -13,7 +13,7 @@ Home: 3-node Proxmox VE + Ceph cluster (pool `rbd-dr`). Azure (Sweden Central, `
 | `iac-reviewer` | active | Reviewing changes under `terraform/` before the operator runs `plan`/`apply` |
 | `cost-watcher` | active | Credit burn, idle resources, forecast against the trial end date |
 | `health-checker` | active | VPN, Ceph and mirroring status on both sites |
-| `dr-operator` | planned | Executing the failover/failback runbook, step by step, with approval |
+| `dr-operator` | active | Preparing a failover/failback: pre-flight checks, exact commands for the operator (tier 3), verification after each step |
 
 Use a sub-agent when its job matches; answer simple questions yourself.
 
