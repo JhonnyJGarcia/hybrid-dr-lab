@@ -2,7 +2,7 @@
 
 A disaster-recovery lab that connects a **hyper-converged Proxmox VE + Ceph cluster** at home to **Microsoft Azure**: storage is replicated asynchronously with **Ceph RBD mirroring** over a **site-to-site VPN**, so that if the whole home cluster goes down, workloads restart on a **Proxmox node running in Azure**.
 
-> Status: phases 0–5 done: replication, failover to Azure and failback to home tested. Azure free trial active.
+> Status: phases 0–5 and 7 done: replication, failover to Azure and failback to home tested; agentic operations layer in place. Azure free trial active.
 
 ## Goals
 
@@ -42,7 +42,7 @@ Design decisions and their reasons: [docs/architecture.md](docs/architecture.md)
 | 4 | [Ceph RBD mirroring](docs/phase-4-rbd-mirroring.md) | Snapshot-based mirroring, container config sync |
 | 5 | [Failover and failback](runbooks/failover-failback.md) | Runbook, measured RPO/RTO, failback to home |
 | 6 | Infrastructure as code and CI | Terraform (Azure side), Ansible (hosts), GitHub Actions with OIDC |
-| 7 | Agentic operations | Sub-agents for IaC review, cost and health checks, failover runbook with approval |
+| 7 | [Agentic operations](docs/phase-7-agentic-ops.md) | Orchestrator + sub-agents for IaC review, health and cost checks, failover preparation (executed by the operator) |
 | 8 | Wrap-up | Documentation, teardown |
 
 Naming and tagging rules: [docs/conventions.md](docs/conventions.md).
@@ -54,4 +54,7 @@ docs/          architecture, one page per phase, conventions, screenshots/
 terraform/     Azure infrastructure as code (phase 6)
 ansible/       Proxmox, Ceph and rbd-mirror configuration (phase 6)
 runbooks/      failover and failback procedures (phase 5)
+scripts/       read-only helpers used by the agents (phase 7)
+.claude/       sub-agents, permission rules and guardrail hook (phase 7)
+CLAUDE.md      orchestrator instructions and autonomy tiers (phase 7)
 ```
