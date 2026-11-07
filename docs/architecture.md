@@ -12,7 +12,7 @@ Proxmox clustering relies on **Corosync**, which needs low, stable latency (a fe
 ### Ceph RBD mirroring instead of Proxmox storage replication
 Proxmox's built-in storage replication (`pvesr`) works only between nodes of the **same** cluster and only with ZFS. Between two Ceph clusters the native tool is **RBD mirroring**:
 - **snapshot-based** mode (works with `krbd`, which Proxmox uses for containers); journal-based mode needs `librbd` and does not apply to LXC
-- an `rbd-mirror` daemon on the DR side pulls snapshots on a schedule (target: every 5 minutes)
+- an `rbd-mirror` daemon on the DR side pulls snapshots on a schedule (every 15 minutes, a trade-off with VPN bandwidth)
 - Proxmox does not manage this from the GUI: the guest configuration (`/etc/pve/lxc/<id>.conf`) must be copied to the DR node separately
 
 Mirroring copies mistakes too (deletions, ransomware), so it does not replace backups.
@@ -35,7 +35,7 @@ The three primary nodes are VMs on one physical Proxmox host. Ceph runs with red
 
 | Metric | Target |
 |---|---|
-| RPO | ≤ 5–10 minutes (mirror snapshot interval) |
+| RPO | ≤ 15 minutes (mirror snapshot interval) |
 | RTO | ≤ 30 minutes (promote image, register guest, start) |
 
 ## Out of scope

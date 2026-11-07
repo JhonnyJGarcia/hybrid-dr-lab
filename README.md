@@ -2,7 +2,7 @@
 
 A disaster-recovery lab that connects a **hyper-converged Proxmox VE + Ceph cluster** at home to **Microsoft Azure**: storage is replicated asynchronously with **Ceph RBD mirroring** over a **site-to-site VPN**, so that if the whole home cluster goes down, workloads restart on a **Proxmox node running in Azure**.
 
-> Status: phase 0 (guardrails). Azure free trial active.
+> Status: phases 0–5 done: replication, failover to Azure and failback to home tested. Azure free trial active.
 
 ## Goals
 
@@ -39,8 +39,8 @@ Design decisions and their reasons: [docs/architecture.md](docs/architecture.md)
 | 1 | Nested HCI cluster | 3 Proxmox VE nodes + Ceph on the home host, test LXC on RBD |
 | 2 | Site-to-site VPN | OPNsense ↔ Azure VPN Gateway (IPsec, route-based) |
 | 3 | Azure DR node | Proxmox VE on an Azure VM, single-node Ceph |
-| 4 | Ceph RBD mirroring | Snapshot-based mirroring, container config sync |
-| 5 | Failover and failback | Runbook, measured RPO/RTO, failback to home |
+| 4 | [Ceph RBD mirroring](docs/phase-4-rbd-mirroring.md) | Snapshot-based mirroring, container config sync |
+| 5 | [Failover and failback](runbooks/failover-failback.md) | Runbook, measured RPO/RTO, failback to home |
 | 6 | Infrastructure as code and CI | Terraform (Azure side), Ansible (hosts), GitHub Actions with OIDC |
 | 7 | Agentic operations | Sub-agents for IaC review, cost and health checks, failover runbook with approval |
 | 8 | Wrap-up | Documentation, teardown |
