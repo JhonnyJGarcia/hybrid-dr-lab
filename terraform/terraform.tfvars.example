@@ -14,4 +14,10 @@ pve_subnet_prefix     = "10.0.1.0/24"
 # Phase 3: Proxmox DR node
 ssh_public_key_path = "~/.ssh/azure_dr.pub"  # SSH public key authorized on the VM
 pve_private_ip      = "10.0.1.10"            # static private IP inside the pve subnet
-# vm_size, admin_username, disk sizes and allowed CIDRs have sensible defaults in variables.tf
+home_jump_host      = "192.168.10.10"         # home cluster node used as SSH jump host
+
+# Networks allowed through the NSG (home lab network, plus the VNet for management)
+mgmt_source_cidrs = ["192.168.10.0/24", "10.0.0.0/16"]
+ceph_source_cidrs = ["192.168.10.0/24"]          # home Ceph public network
+
+# vm_size, admin_username and disk sizes have sensible defaults in variables.tf

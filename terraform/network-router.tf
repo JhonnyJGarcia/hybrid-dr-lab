@@ -2,7 +2,7 @@
 # Phase 4: route the DR LXC subnet (SDN on the Proxmox node) through the node.
 #
 # Home <-> 10.50.0.0/16 already works through system routes propagated by the
-# VPN gateway (LNG prefix 192.168.50.0/24): nothing to add for that.
+# VPN gateway (the local network gateway prefix = home lab network): nothing to add for that.
 # 10.50.2.0/24 is not an Azure subnet, so Azure must be told the next hop.
 # ---------------------------------------------------------------------------
 

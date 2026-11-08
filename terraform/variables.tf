@@ -91,15 +91,18 @@ variable "osd_disk_size_gb" {
 }
 
 variable "mgmt_source_cidrs" {
-  description = "Networks allowed to reach SSH/PVE/ICMP over the VPN"
+  description = "Networks allowed to reach SSH/PVE/ICMP over the VPN (home lab network + the VNet)"
   type        = list(string)
-  default     = ["192.168.50.0/24", "10.50.0.0/16"]
 }
 
 variable "ceph_source_cidrs" {
-  description = "Networks allowed to reach Ceph ports (home cluster, for mirroring)"
+  description = "Networks allowed to reach Ceph ports (home cluster public network, for mirroring)"
   type        = list(string)
-  default     = ["192.168.50.0/24"]
+}
+
+variable "home_jump_host" {
+  description = "Home cluster node used as SSH jump host to reach the DR node over the VPN"
+  type        = string
 }
 
 variable "image_publisher" {

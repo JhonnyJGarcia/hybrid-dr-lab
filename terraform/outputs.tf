@@ -26,8 +26,8 @@ output "pve_private_ip" {
 }
 
 output "pve_ssh_jump" {
-  description = "SSH to the DR node, jumping through the home cluster node px1"
-  value       = "ssh -J root@192.168.50.10 ${var.admin_username}@${azurerm_network_interface.pve.private_ip_address}"
+  description = "SSH to the DR node, jumping through a home cluster node"
+  value       = "ssh -J root@${var.home_jump_host} ${var.admin_username}@${azurerm_network_interface.pve.private_ip_address}"
 }
 
 output "route_table" {
